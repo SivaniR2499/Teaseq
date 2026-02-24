@@ -70,6 +70,8 @@
 # Modality: scRNA-seq reads capturing messenger RNA from individual cells.
 # These reads are used to measure gene expression levels per cell.
 # SRR runs: SRR28887172, SRR28887173, SRR28887174, SRR28887175
+# make sure to change the directory where you have these srr files for the respective SRA
+# applies for all the below 
 # =============================================================================
 
 ```bash
