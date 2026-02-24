@@ -90,4 +90,6 @@ The %2 concurrency limit can be adjusted based on cluster resource availability.
 Ensure the all the paths for the directory exists before submission, or the job will
 fail to write log files.
 
-Just to be easy, it is always better to save the SRA, SRR and the fastqs like shown in the picture below<img width="1131" height="600" alt="Screen Shot 2026-02-23 at 4 36 01 PM" src="https://github.com/user-attachments/assets/3fc03359-8400-4a28-92f6-3b2b7f7663cf" />
+Just to be easy, it is always better to save the SRA, SRR and the fastqs like shown in the picture below-
+Fastqs are saved in the fastq directory :
+<img width="1131" height="600" alt="Screen Shot 2026-02-23 at 4 36 01 PM" src="https://github.com/user-attachments/assets/3fc03359-8400-4a28-92f6-3b2b7f7663cf" />
