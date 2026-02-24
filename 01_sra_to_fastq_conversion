@@ -1,39 +1,33 @@
-# This is a wrapper script to run for each GSM samples 
-## this converts the sra files to fastq formats
-#make sure you have the tools loaded (I preferred loading them inside a conda environment)
-#You will need sra-tools and pigz for this conversion
 #!/bin/bash
-#BSUB -J convert_GSM8249182
-#BSUB -o convert_GSM8249182.out
-#BSUB -e convert_GSM8249182.err
-#BSUB -n 8
-#BSUB -M 64000
+#BSUB -J convert_gsm[1-3]%2
+#BSUB -o /storage1/fs1/cooper_m/Active/r.sivani/Teaseq/paper_analysis/raw_data/mlin/gse266524/fastq2/logs/convert_%I.out
+#BSUB -e /storage1/fs1/cooper_m/Active/r.sivani/Teaseq/paper_analysis/raw_data/mlin/gse266524/fastq2/logs/convert_%I.err
+#BSUB -n 1
+#BSUB -M 16000
 #BSUB -W 12:00
+
 set -e
 set -o pipefail
 
-#source /opt/conda/etc/profile.d/conda.sh
-source activate teaseq
+source ~/.bashrc
+conda activate teaseq
 
-## make sure you have the SRA files inside the SRA_DIR 
-# change paths accordingly
 BASE_DIR="/storage1/fs1/cooper_m/Active/r.sivani/Teaseq/paper_analysis/raw_data/mlin/gse266524"
-SRA_DIR="${BASE_DIR}/sra/GSM8249182/"
-FASTQ_DIR="${BASE_DIR}/fastq/GSM8249182"
-TMP_DIR="${BASE_DIR}/tmp_fastq"
+GSM=$(sed -n "${LSB_JOBINDEX}p" /storage1/fs1/cooper_m/Active/r.sivani/Teaseq/paper_analysis/raw_data/mlin/gse266524/gsm_list.txt)
+echo "Processing GSM: ${GSM}"
+SRA_DIR="${BASE_DIR}/sra/${GSM}"
+FASTQ_DIR="${BASE_DIR}/fastq2/${GSM}"
 
 mkdir -p ${FASTQ_DIR}
-mkdir -p ${TMP_DIR}
 
-find ${SRA_DIR} -name "*.sra" | while read SRA_FILE
+for SRA_FILE in ${SRA_DIR}/*/*.sra
+
 do
-    SRR=$(basename ${SRA_FILE} .sra)
-
-    fasterq-dump ${SRA_FILE} \
+     [ -f "${SRA_FILE}" ] || { echo "No .sra files found in ${SRA_DIR}, skipping."; break; }
+    fastq-dump \
         --split-files \
-        --threads 8 \
-        --temp ${TMP_DIR} \
-        --outdir ${FASTQ_DIR}
-
-    pigz -p 8 ${FASTQ_DIR}/${SRR}_*.fastq
+        --origfmt \
+        --gzip \
+        --outdir ${FASTQ_DIR} \
+        ${SRA_FILE}
 done
